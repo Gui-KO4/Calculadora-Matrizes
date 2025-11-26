@@ -1,8 +1,6 @@
 ﻿public class Program{
     public static void Main(){
-                
-            CalculadoraMatrizes calc = new CalculadoraMatrizes();
-            
+            Console.Clear();
             String[] Menu =
             {
                 "| 1-Leitura de uma Matriz                          |",        
@@ -28,31 +26,31 @@
             {
                 case "1": //ler uma matriz
 
-                    //Obter o nome da Matriz
-                    Console.WriteLine("Que nome pretende dar a esta Matriz?");
-                    String Name = Console.ReadLine();
-                    
-                    //Usar o metodo para ler uma matriz e adiciona la a uma variavel
-                    double [,] matrixAdd = calc.Matrix_Read();
-                    
-                    //adicionar o nome e a matriz a um dicionario de matrizes
-                    Matrizes.TryAdd(Name, matrixAdd);
+                        //Obter o nome da Matriz
+                        Console.WriteLine("Que nome pretende dar a esta Matriz?");
+                        String Name = Console.ReadLine();
+                        
+                        //Usar o metodo para ler uma matriz e adiciona la a uma variavel
+                        double [,] matrixRead = CalculadoraMatrizes.Matrix_Read();
+                        
+                        //adicionar o nome e a matriz a um dicionario de matrizes
+                        Matrizes.TryAdd(Name, matrixRead);
                     break;
                 case "2": //multiplicar a matriz por uma escalar
 
-                        //Obter a Matriz dentro pelo nome 
+                        //Obter a Matriz pelo nome 
                         Console.WriteLine("Qual a Matriz que pretende usar?");
-                        string MatrixName = Console.ReadLine();
-                        Matrizes.TryGetValue(MatrixName, out double[,] matrixScalarMult);
+                        string matrixName = Console.ReadLine();
+                        Matrizes.TryGetValue(matrixName, out double[,] matrixScalarMult);
 
                         //obter a constante para multiplicar a matriz
                         Console.WriteLine("Por qual valor pretende multiplicar a Matriz");
                         double valor = Convert.ToDouble(Console.ReadLine());
 
                         //Multiplicar a Matriz escolhida pela constante
-                        double[,] MatrixMulti = calc.Matrix_Scalar_Mult(matrixScalarMult, valor);
+                        double[,] matrixMulti = CalculadoraMatrizes.Matrix_Scalar_Mult(matrixScalarMult, valor);
 
-                        calc.MatrixPrint(MatrixMulti);
+                        CalculadoraMatrizes.MatrixPrint(matrixMulti);
                     break;
                 case "3": //Somar duas matrizes
 
@@ -60,36 +58,73 @@
                         Console.WriteLine("Quais as matrizes que pretende somar?");
 
                         //reading user input
-                        string matrizes = Console.ReadLine();
-                        string[] letrasMatrizes = matrizes.Split(" ",StringSplitOptions.None);
+                        string matrizesSoma = Console.ReadLine();
+                        string[] letrasMatrizes = matrizesSoma.Split(" ",StringSplitOptions.None);
                         
                         //associar o inputa separado do user para cada variavel
                         string matrixAAddName = letrasMatrizes[0]; 
                         string matrixBAddNome = letrasMatrizes[1]; 
 
-                    //procurar no dicionario as matrizes que o user inseriu 
+                        //procurar no dicionario as matrizes que o user inseriu 
                         Matrizes.TryGetValue(matrixAAddName, out double[,] matrixAAdd);
                         Matrizes.TryGetValue(matrixBAddNome, out double[,] matrixBAdd);
 
                         //fazer a soma das matrizes
-                        calc.Matrix_ADD(matrixAAdd, matrixBAdd);
+                        double[,] matrixAdd = CalculadoraMatrizes.Matrix_ADD(matrixAAdd, matrixBAdd);
+                        CalculadoraMatrizes.MatrixPrint(matrixAdd);
                     break;
                 case "4": //multiplicação de matrizes
+                        //mesma coisa que a soma so criamos var novas e trocamos o metodo no fim
+                        //obter as matrizes para somar
+                        Console.WriteLine("Quais as matrizes que pretende Multiplicar?");
 
+                        //reading user input
+                        string matrizesMult = Console.ReadLine();
+                        string[] letrasMatrizesMult = matrizesMult.Split(" ",StringSplitOptions.None);
+                        
+                        //associar o inputa separado do user para cada variavel
+                        string matrixAMultName = letrasMatrizesMult[0]; 
+                        string matrixBMultNome = letrasMatrizesMult[1]; 
+
+                        //procurar no dicionario as matrizes que o user inseriu 
+                        Matrizes.TryGetValue(matrixAMultName, out double[,] matrixAMult);
+                        Matrizes.TryGetValue(matrixBMultNome, out double[,] matrixBMult);
+
+                        //fazer a multiplicaçao das matrizes
+                        double [,] matrixMult = CalculadoraMatrizes.Matrix_Mult(matrixAMult, matrixBMult);
+                        CalculadoraMatrizes.MatrixPrint(matrixMult);
                     break;
                 case "5": //inversa 2x2
-
+                        
+                        //Obter a Matriz pelo nome 
+                        Console.WriteLine("Qual a Matriz que pretende usar?");
+                        string matrixToInve2Name = Console.ReadLine();
+                        Matrizes.TryGetValue(matrixToInve2Name, out double[,] matrixToInve2);
+                        
+                        double [,] MatrixInve2 = CalculadoraMatrizes.Matrix_Inverse_2x2(matrixToInve2);
+                        CalculadoraMatrizes.MatrixPrint(MatrixInve2);
                     break;
                 case "6": //inversa 3x3
-
+                        Console.WriteLine("Qual a Matriz que pretende usar?");
+                        string matrixToInve3Name = Console.ReadLine();
+                        Matrizes.TryGetValue(matrixToInve3Name, out double[,] matrixToInve3);
+                       
+                        double [,] matrixInve3 = CalculadoraMatrizes.Inversa3x3(matrixToInve3);
+                        CalculadoraMatrizes.MatrixPrint(matrixInve3);
                     break;
                 case "7": //tranposta de uma matriz
 
                     break;
-                case "8": //Matriz triangular
+                case "8": //Matriz diagonal
 
                     break;
-                case "9": //
+                case "9"://triangular superior
+
+                    break;    
+                case "10": //Show available matrixes
+
+                    //just call the method and give it our dictionary with the matrixes
+                    CalculadoraMatrizes.Show_Matrixes(Matrizes);
 
                     break;
                 default:

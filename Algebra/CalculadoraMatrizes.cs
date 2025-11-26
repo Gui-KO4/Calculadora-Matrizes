@@ -1,19 +1,13 @@
 
-using System.Security;
-
 public class CalculadoraMatrizes
 {
-    public double[,] Matrix_Read()
+    public static double[,] Matrix_Read()
     {
         do{
-        Console.WriteLine("Qual o tamanho da sua matriz?");
+        Console.WriteLine("Qual o tamanho da sua matriz? (Ex: 2x2)");
 
             string size = Console.ReadLine();
             string[] parts = size.Split('x',StringSplitOptions.None);
-            foreach(string part in parts)
-            {
-                Console.WriteLine(part);
-            }
         
         if(parts.Length <= 2){
             int Columns = int.Parse(parts[0]);
@@ -33,7 +27,7 @@ public class CalculadoraMatrizes
         }while(true);        
         
     }
-    public double[,] Matrix_Scalar_Mult(double[,] matriz, double constante)
+    public static double[,] Matrix_Scalar_Mult(double[,] matriz, double constante)
     {
         double[,] Matrix_Scalar_Mult = matriz;
         for (int i = 0; i < matriz.GetLength(0); i++)
@@ -49,15 +43,13 @@ public class CalculadoraMatrizes
 
 
 
-    public double[,] Matrix_ADD(double[,] MatrizA , double [,] MatrizB)
+    public static double[,] Matrix_ADD(double[,] MatrizA , double [,] MatrizB)
     {
         do{
             if(MatrizA.GetLength(0) == MatrizB.GetLength(0) && MatrizA.GetLength(1) == MatrizB.GetLength(1))
             {
                 int cols = MatrizA.GetLength(0);
-                Console.WriteLine(cols);
                 int rows = MatrizA.GetLength(1);
-                Console.WriteLine(rows);
                 double [,] MatrixADD = new double[cols, rows];
                 for(int i = 0; i < cols; i++) 
                 {
@@ -76,7 +68,7 @@ public class CalculadoraMatrizes
 
 
     
-public double[,] Matrix_Mult(double[,] MatrizA, double[,] MatrizB)
+public static double[,] Matrix_Mult(double[,] MatrizA, double[,] MatrizB)
 {
     double[,] MatrizMult = null; // declaração fora do if/else
 
@@ -108,7 +100,7 @@ public double[,] Matrix_Mult(double[,] MatrizA, double[,] MatrizB)
 }
 
 
-public double[,] Matrix_Inverse_2x2(double[,] matrizA)
+public static double[,] Matrix_Inverse_2x2(double[,] matrizA)
     {
         if(matrizA.GetLength(0) == 2 && matrizA.GetLength(0) == 2)
         {
@@ -116,8 +108,14 @@ public double[,] Matrix_Inverse_2x2(double[,] matrizA)
         double diagonalSecundaria = matrizA[0,1] * matrizA[1,0];
         double detA = diagonalPrincipal - diagonalSecundaria;
             
-            if(detA == 0)
-                return null;
+            /* por alguma razao se fizer return null o programa crasha
+            portanto devolvo uma matriz som com 0*/
+            if(detA == 0) 
+            {
+                double [,] erro = {{0}};
+                Console.WriteLine("Esta matriz nao tem inversa pois o determinante é 0");
+                return erro;
+            }
             
         double [,] matrizTemp = new double[2,2];
         matrizTemp[0,0] = matrizA[1,1];
@@ -131,7 +129,7 @@ public double[,] Matrix_Inverse_2x2(double[,] matrizA)
     }
 
 
-public double[,] Inversa3x3(double[,] m)
+public static double[,] Inversa3x3(double[,] m)
 {
     // Calcula determinante
     double det = m[0,0]*(m[1,1]*m[2,2] - m[1,2]*m[2,1])
@@ -178,21 +176,7 @@ public double[,] Inversa3x3(double[,] m)
 
 }
 
-       public void MatrixPrint(double[,] m)
-        {
-        int linhas = m.GetLength(0);
-        int colunas = m.GetLength(1);
 
-        Console.WriteLine();
-        for (int i = 0; i < linhas; i++)
-        {
-            for (int j = 0; j < colunas; j++)
-            {
-                Console.Write($"{m[i, j]} "); // F2 formata para 2 casas decimais
-            }
-            Console.WriteLine();
-        }
-    }
 
 
 // Todo: (Matrix_Transpose) 
@@ -201,10 +185,37 @@ public double[,] Inversa3x3(double[,] m)
 // Todo: (Matrix_Determinant_3x3_Sarrous)
 // Todo: (Espaço gerado) se haver tempo
 // Todo: (Valores proprios) se o stor deixar usar Math
-// 
 
 
 
+       public static void MatrixPrint(double[,] matrix)
+        {
+        int linhas = matrix.GetLength(0);
+        int colunas = matrix.GetLength(1);
+
+        Console.WriteLine();
+        for (int i = 0; i < linhas; i++)
+        {
+            Console.Write("|");
+            for (int j = 0; j < colunas; j++)
+            {
+                Console.Write($"{matrix[i, j]} "); 
+            }
+            Console.WriteLine("|");
+        }
+    }
+
+    public static void Show_Matrixes(Dictionary<string, double[,] > matrixes)
+    {
+        foreach (KeyValuePair<string, double[,]> matrix in matrixes)
+        {
+            Console.WriteLine("_______________");
+            Console.WriteLine(matrix.Key);
+            MatrixPrint(matrix.Value);
+            Console.WriteLine("_______________");
+        }
+
+    }
 
 }
 
