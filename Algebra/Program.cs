@@ -50,7 +50,9 @@
                         double valor = Convert.ToDouble(Console.ReadLine());
 
                         //Multiplicar a Matriz escolhida pela constante
-                        calc.Matrix_Scalar_Mult(matrixScalarMult, valor);
+                        double[,] MatrixMulti = calc.Matrix_Scalar_Mult(matrixScalarMult, valor);
+
+                        calc.MatrixPrint(MatrixMulti);
                     break;
                 case "3": //Somar duas matrizes
 
