@@ -109,7 +109,7 @@
                         string matrixToInve3Name = Console.ReadLine();
                         Matrizes.TryGetValue(matrixToInve3Name, out double[,] matrixToInve3);
                        
-                        double [,] matrixInve3 = CalculadoraMatrizes.Inversa3x3(matrixToInve3);
+                        double [,] matrixInve3 = CalculadoraMatrizes.Matrix_Invers_3x3(matrixToInve3);
                         CalculadoraMatrizes.MatrixPrint(matrixInve3);
                     break;
                 case "7": //tranposta de uma matriz

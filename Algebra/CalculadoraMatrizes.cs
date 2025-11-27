@@ -129,7 +129,7 @@ public static double[,] Matrix_Inverse_2x2(double[,] matrizA)
     }
 
 
-public static double[,] Inversa3x3(double[,] m)
+public static double[,] Matrix_Invers_3x3(double[,] m)
 {
     // Calcula determinante
     double det = m[0,0]*(m[1,1]*m[2,2] - m[1,2]*m[2,1])
