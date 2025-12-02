@@ -34,6 +34,7 @@ public class CalculadoraController{
                 Console.WriteLine(option);
                 
             String comands = Console.ReadLine();
+            try{
             switch (comands)
             {
                 case "1": //ler uma matriz
@@ -188,6 +189,10 @@ public class CalculadoraController{
                 default:
                     break;
 
+            }
+            }catch(Exception e){
+                Console.WriteLine("Ocorreu um erro: " + e.Message);
+                Console.ReadLine();
             }  
         }    
     }

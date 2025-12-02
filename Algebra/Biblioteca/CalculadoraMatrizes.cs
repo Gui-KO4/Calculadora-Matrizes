@@ -135,11 +135,16 @@ public class CalculadoraMatrizes
 
     public static double[,] Matrix_Inverse_2x2(double[,] matrizA)
     {
-        if(matrizA.GetLength(0) == 2 && matrizA.GetLength(0) == 2)
-        {
+        EnsureMatrixSize(matrizA, 2, 2, nameof(matrizA));
+
         double diagonalPrincipal = matrizA[0,0] * matrizA[1,1];
         double diagonalSecundaria = matrizA[0,1] * matrizA[1,0];
         double detA = diagonalPrincipal - diagonalSecundaria;
+
+        if (detA == 0)
+        {
+            throw new InvalidOperationException("A matriz não é invertível (determinante é zero).");
+        }
             
         double [,] matrizTemp = new double[2,2];
         matrizTemp[0,0] = matrizA[1,1];
@@ -148,49 +153,55 @@ public class CalculadoraMatrizes
         matrizTemp[1,0] = -matrizA[1,0];
         double[,] matrixInverse2x2 = Matrix_Scalar_Mult(matrizTemp, detA );
         return matrixInverse2x2;
-        }
-        else
-        {
-            Console.WriteLine("A matriz nao é 2x2");
-            return Matrix_Error();
-        }
         
     }
 
-    public static double Matrix_Determinant_3x3(double[,] m)
+    public static double Matrix_Determinant_3x3(double[,] matrizA)
     {
-        double det = m[0,0]*(m[1,1]*m[2,2] - m[1,2]*m[2,1])
-               - m[0,1]*(m[1,0]*m[2,2] - m[1,2]*m[2,0])
-               + m[0,2]*(m[1,0]*m[2,1] - m[1,1]*m[2,0]);
-               
+            double det = matrizA[0,0]*(matrizA[1,1]*matrizA[2,2] - matrizA[1,2]*matrizA[2,1])
+               - matrizA[0,1]*(matrizA[1,0]*matrizA[2,2] - matrizA[1,2]*matrizA[2,0])
+               + matrizA[0,2]*(matrizA[1,0]*matrizA[2,1] - matrizA[1,1]*matrizA[2,0]);
+
+
+            if(det == 0)
+            {
+              throw new InvalidOperationException("O determinante é zero, a matriz não é invertível.");
+            }
+
             return det;
     }
 
 
 
 
-    public static double[,] Matrix_Invers_3x3(double[,] m)
+    public static double[,] Matrix_Invers_3x3(double[,] matrizA)
     {
-        // Calcula determinante
-        double det = m[0,0]*(m[1,1]*m[2,2] - m[1,2]*m[2,1])
-                - m[0,1]*(m[1,0]*m[2,2] - m[1,2]*m[2,0])
-                + m[0,2]*(m[1,0]*m[2,1] - m[1,1]*m[2,0]);
 
-        if (det == 0) return null; // não invertível
+        EnsureMatrixSize(matrizA, 3, 3, nameof(matrizA));
+
+        // Calcula determinante
+        double det = matrizA[0,0]*(matrizA[1,1]*matrizA[2,2] - matrizA[1,2]*matrizA[2,1])
+                - matrizA[0,1]*(matrizA[1,0]*matrizA[2,2] - matrizA[1,2]*matrizA[2,0])
+                + matrizA[0,2]*(matrizA[1,0]*matrizA[2,1] - matrizA[1,1]*matrizA[2,0]);
+
+        if (det == 0) 
+        {
+            throw new InvalidOperationException("O determinante é zero, a matriz não é invertível.");
+        }
 
         // Calcula matriz de cofatores
         double[,] cofatores = new double[3, 3];
-        cofatores[0, 0] =  (m[1,1]*m[2,2] - m[1,2]*m[2,1]);
-        cofatores[0, 1] = -(m[1,0]*m[2,2] - m[1,2]*m[2,0]);
-        cofatores[0, 2] =  (m[1,0]*m[2,1] - m[1,1]*m[2,0]);
+        cofatores[0, 0] =  (matrizA[1,1]*matrizA[2,2] - matrizA[1,2]*matrizA[2,1]);
+        cofatores[0, 1] = -(matrizA[1,0]*matrizA[2,2] - matrizA[1,2]*matrizA[2,0]);
+        cofatores[0, 2] =  (matrizA[1,0]*matrizA[2,1] - matrizA[1,1]*matrizA[2,0]);
 
-        cofatores[1, 0] = -(m[0,1]*m[2,2] - m[0,2]*m[2,1]);
-        cofatores[1, 1] =  (m[0,0]*m[2,2] - m[0,2]*m[2,0]);
-        cofatores[1, 2] = -(m[0,0]*m[2,1] - m[0,1]*m[2,0]);
+        cofatores[1, 0] = -(matrizA[0,1]*matrizA[2,2] - matrizA[0,2]*matrizA[2,1]);
+        cofatores[1, 1] =  (matrizA[0,0]*matrizA[2,2] - matrizA[0,2]*matrizA[2,0]);
+        cofatores[1, 2] = -(matrizA[0,0]*matrizA[2,1] - matrizA[0,1]*matrizA[2,0]);
 
-        cofatores[2, 0] =  (m[0,1]*m[1,2] - m[0,2]*m[1,1]);
-        cofatores[2, 1] = -(m[0,0]*m[1,2] - m[0,2]*m[1,0]);
-        cofatores[2, 2] =  (m[0,0]*m[1,1] - m[0,1]*m[1,0]);
+        cofatores[2, 0] =  (matrizA[0,1]*matrizA[1,2] - matrizA[0,2]*matrizA[1,1]);
+        cofatores[2, 1] = -(matrizA[0,0]*matrizA[1,2] - matrizA[0,2]*matrizA[1,0]);
+        cofatores[2, 2] =  (matrizA[0,0]*matrizA[1,1] - matrizA[0,1]*matrizA[1,0]);
 
         // Transposta da matriz de cofatores - adjunta
         double[,] adjunta = new double[3, 3];
@@ -232,10 +243,10 @@ public static double[,] Matrix_Transpose(double[,] matrix)
         return matrixTranspose;
     }
 
-    public static string  Matrix_IsDiagonal(double[,] m)
+    public static string  Matrix_IsDiagonal(double[,] matrizA)
     {
-        int rows = m.GetLength(0);
-        int cols = m.GetLength(1);
+        int rows = matrizA.GetLength(0);
+        int cols = matrizA.GetLength(1);
 
         // Só faz sentido verificar se for quadrada
         if (rows != cols)
@@ -246,17 +257,17 @@ public static double[,] Matrix_Transpose(double[,] matrix)
         {
             for (int j = 0; j < cols; j++)
             {
-                if (i != j && m[i, j] != 0)
+                if (i != j && matrizA[i, j] != 0)
                      return "A matriz não é diagonal.";
             }
         }
         return "A matriz é diagonal.";
         
     }
-    public static string Matrix_IsTriangular(double[,] m)
+    public static string Matrix_IsTriangular(double[,] matrizA)
     {
-        int rows = m.GetLength(0);
-        int cols = m.GetLength(1);
+        int rows = matrizA.GetLength(0);
+        int cols = matrizA.GetLength(1);
 
         if (rows != cols)
             return "A matriz não é quadrada, logo não pode ser triangular.";
@@ -265,7 +276,7 @@ public static double[,] Matrix_Transpose(double[,] matrix)
         {
             for (int j = 0; j < i; j++)
             {
-                if (m[i, j] != 0)
+                if (matrizA[i, j] != 0)
                     superior = false;
             }
         }
@@ -387,14 +398,18 @@ public static List<double[]> Generate_Space(Dictionary<string, double[]> vectors
 
 
 
-// Todo: (Espaço gerado) se haver tempo
-// Todo: (Valores proprios) se o stor deixar usar Math
+    // Todo: (Espaço gerado) se haver tempo
+    // Todo: (Valores proprios) se o stor deixar usar Math
 
 
     // Error Helper Fix
-    public static double[,] Matrix_Error()
+    private static void EnsureMatrixSize(double[,] matrix, int expectedRows, int expectedCols, string argumentName)
     {
-        return new double[,] { { 0 } };
+        if (matrix == null)
+            throw new ArgumentNullException(argumentName);
+
+        if (matrix.GetLength(0) != expectedRows || matrix.GetLength(1) != expectedCols)
+            throw new ArgumentException($"A matriz deve ter dimensão {expectedRows}x{expectedCols}.", argumentName);
     }
        
 
