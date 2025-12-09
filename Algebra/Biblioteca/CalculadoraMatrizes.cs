@@ -290,6 +290,50 @@ public class CalculadoraMatrizes
             Console.WriteLine("_______________");
         }
     }
+    public static double[] Vector_Add(double[] v1, double[] v2)
+    {
+        if (v1.Length != v2.Length)
+        {
+            Console.WriteLine("Erro: Os vetores devem ter o mesmo tamanho para serem somados.");
+            return null;
+        }
+
+        double[] result = new double[v1.Length];
+        for (int i = 0; i < v1.Length; i++)
+        {
+            result[i] = v1[i] + v2[i];
+        }
+        return result;
+    }
+
+    // 2. MULTIPLICAÇÃO POR UMA CONSTANTE (ESCALAR)
+    public static double[] Vector_Scalar_Mult(double[] v, double scalar)
+    {
+        double[] result = new double[v.Length];
+        for (int i = 0; i < v.Length; i++)
+        {
+            result[i] = v[i] * scalar;
+        }
+        return result;
+    }
+
+    // 3. MULTIPLICAÇÃO DE VETORES (PRODUTO INTERNO/ESCALAR)
+    // Nota: Isto resulta num número (double), não num vetor.
+    public static double? Vector_Dot_Product(double[] v1, double[] v2)
+    {
+        if (v1.Length != v2.Length)
+        {
+            Console.WriteLine("Erro: Os vetores devem ter o mesmo tamanho para o produto interno.");
+            return null; // Retorna nulo se der erro
+        }
+
+        double sum = 0;
+        for (int i = 0; i < v1.Length; i++)
+        {
+            sum += v1[i] * v2[i];
+        }
+        return sum;
+    }
 
     private static void EnsureMatrixSize(double[,] matrix, int expectedRows, int expectedCols, string argumentName)
     {

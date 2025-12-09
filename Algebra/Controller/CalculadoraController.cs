@@ -26,7 +26,10 @@ public class CalculadoraController
             "| 9    -Verificar se uma Matriz é triangular superior.  |",
             "| 10   -Determinante de uma Matriz 3x3.                 |",
             "| 11   -Leitura de um vetor.                            |",
-            "| 12   -JOGAR BATALHA NAVAL (Matricial).                |",
+            "| 12   -Somar dois Vetores.                             |", 
+            "| 13   -Multiplicar Vetor por uma constante.            |", 
+            "| 14   -Produto Interno de dois Vetores (Multiplicação).|", 
+            "| 15   -JOGAR BATALHA NAVAL (Matricial).                |",
             "| LM   -Para listar todas as matrizes.                  |",
             "| LV   -Para listar todos os vetores.                   |"
         };
@@ -155,8 +158,68 @@ public class CalculadoraController
                         Vetores.TryAdd(nameVec, vec);
                         Console.ReadLine();
                         break;
+                    case "12": // SOMAR VETORES
+                        Console.WriteLine("Quais os vetores a somar? (separe nomes com espaço)");
+                        string[] partsVAdd = Console.ReadLine().Split(' ');
+                        if (partsVAdd.Length >= 2 && 
+                            Vetores.TryGetValue(partsVAdd[0], out double[] vA_Add) && 
+                            Vetores.TryGetValue(partsVAdd[1], out double[] vB_Add))
+                        {
+                            double[] resV = CalculadoraMatrizes.Vector_Add(vA_Add, vB_Add);
+                            if (resV != null)
+                            {
+                                CalculadoraMatrizes.VectorPrint(resV);
+                                // Perguntar se quer guardar o vetor resultante
+                                Console.WriteLine("Guardar este vetor? (S/N)");
+                                if(Console.ReadLine().ToLower() == "s")
+                                {
+                                    Console.WriteLine("Nome:");
+                                    Vetores.TryAdd(Console.ReadLine(), resV);
+                                }
+                            }
+                        }
+                    else Console.WriteLine("Vetores não encontrados.");
+                    break;
 
-                    case "12":
+                case "13": // VETOR POR CONSTANTE
+                    Console.WriteLine("Qual o vetor?");
+                    string nameVSc = Console.ReadLine();
+                    if (Vetores.TryGetValue(nameVSc, out double[] vSc))
+                    {
+                        Console.WriteLine("Por qual valor multiplicar?");
+                        double valV = Convert.ToDouble(Console.ReadLine());
+                        double[] resVSc = CalculadoraMatrizes.Vector_Scalar_Mult(vSc, valV);
+                        
+                        CalculadoraMatrizes.VectorPrint(resVSc);
+                        
+                        Console.WriteLine("Guardar este vetor? (S/N)");
+                        if(Console.ReadLine().ToLower() == "s")
+                        {
+                            Console.WriteLine("Nome:");
+                            Vetores.TryAdd(Console.ReadLine(), resVSc);
+                        }
+                    }
+                    else Console.WriteLine("Vetor não encontrado.");
+                    break;
+
+                case "14": // PRODUTO INTERNO (Multiplicação de vetores)
+                    Console.WriteLine("Quais os vetores a multiplicar? (separe nomes com espaço)");
+                    string[] partsVMult = Console.ReadLine().Split(' ');
+                    if (partsVMult.Length >= 2 && 
+                        Vetores.TryGetValue(partsVMult[0], out double[] vA_M) && 
+                        Vetores.TryGetValue(partsVMult[1], out double[] vB_M))
+                    {
+                        double? resultDot = CalculadoraMatrizes.Vector_Dot_Product(vA_M, vB_M);
+                        if (resultDot != null)
+                        {
+                            Console.WriteLine($"O produto interno (escalar) é: {resultDot}");
+                        }
+                    }
+                    else Console.WriteLine("Vetores não encontrados.");
+                    Console.ReadLine();
+                    break;
+
+                    case "15":
                         // INSTANCIA O JOGO E INICIA
                         BatalhaNaval jogo = new BatalhaNaval();
                         jogo.IniciarJogo();
