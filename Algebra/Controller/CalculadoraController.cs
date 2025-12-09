@@ -12,7 +12,7 @@ public class CalculadoraController
         Matrizes = new Dictionary<string, double[,]>();
         Vetores = new Dictionary<string, double[]>();
 
-        // MENU UNIFICADO (Todas as opções juntas)
+        // MENU COMPLETO
         Menu = new string[]
         {
             "| 1    -Leitura de uma Matriz.                          |",
@@ -46,160 +46,130 @@ public class CalculadoraController
             {
                 switch (comands)
                 {
-                    case "1": //ler uma matriz
+                    case "1":
                         Console.WriteLine("Que nome pretende dar a esta Matriz?");
                         String Name = Console.ReadLine();
                         double[,] matrixRead = CalculadoraMatrizes.Matrix_Read();
                         Matrizes.TryAdd(Name, matrixRead);
                         break;
 
-                    case "2": //multiplicar a matriz por uma escalar
+                    case "2":
                         Console.WriteLine("Qual a Matriz que pretende usar?");
-                        string matrixName = Console.ReadLine();
-                        if (Matrizes.TryGetValue(matrixName, out double[,] matrixScalarMult))
+                        string name2 = Console.ReadLine();
+                        if (Matrizes.TryGetValue(name2, out double[,] mat2))
                         {
-                            Console.WriteLine("Por qual valor pretende multiplicar a Matriz");
-                            double valor = Convert.ToDouble(Console.ReadLine());
-                            double[,] matrixMulti = CalculadoraMatrizes.Matrix_Scalar_Mult(matrixScalarMult, valor);
-                            CalculadoraMatrizes.MatrixPrint(matrixMulti);
-                            SaveMatrix(matrixMulti);
+                            Console.WriteLine("Por qual valor multiplicar?");
+                            double val = Convert.ToDouble(Console.ReadLine());
+                            double[,] res = CalculadoraMatrizes.Matrix_Scalar_Mult(mat2, val);
+                            CalculadoraMatrizes.MatrixPrint(res);
+                            SaveMatrix(res);
                         }
                         else Console.WriteLine("Matriz não encontrada.");
                         break;
 
-                    case "3": //Somar duas matrizes
-                        Console.WriteLine("Quais as matrizes que pretende somar? (separe com espaço)");
-                        string matrizesSoma = Console.ReadLine();
-                        string[] letrasMatrizes = matrizesSoma.Split(" ", StringSplitOptions.None);
-
-                        if (letrasMatrizes.Length >= 2 &&
-                            Matrizes.TryGetValue(letrasMatrizes[0], out double[,] matrixAAdd) &&
-                            Matrizes.TryGetValue(letrasMatrizes[1], out double[,] matrixBAdd))
+                    case "3":
+                        Console.WriteLine("Quais as matrizes a somar? (separe com espaço)");
+                        string[] parts3 = Console.ReadLine().Split(' ');
+                        if (parts3.Length >= 2 && Matrizes.TryGetValue(parts3[0], out double[,] mA) && Matrizes.TryGetValue(parts3[1], out double[,] mB))
                         {
-                            double[,] matrixAdd = CalculadoraMatrizes.Matrix_ADD(matrixAAdd, matrixBAdd);
-                            if (matrixAdd != null)
-                            {
-                                CalculadoraMatrizes.MatrixPrint(matrixAdd);
-                                SaveMatrix(matrixAdd);
-                            }
+                            double[,] res = CalculadoraMatrizes.Matrix_ADD(mA, mB);
+                            if (res != null) { CalculadoraMatrizes.MatrixPrint(res); SaveMatrix(res); }
                         }
-                        else Console.WriteLine("Matrizes não encontradas.");
+                        else Console.WriteLine("Erro ao encontrar matrizes.");
                         break;
 
-                    case "4": //multiplicação de matrizes
-                        Console.WriteLine("Quais as matrizes que pretende Multiplicar? (separe com espaço)");
-                        string matrizesMult = Console.ReadLine();
-                        string[] letrasMatrizesMult = matrizesMult.Split(" ", StringSplitOptions.None);
-
-                        if (letrasMatrizesMult.Length >= 2 &&
-                            Matrizes.TryGetValue(letrasMatrizesMult[0], out double[,] matrixAMult) &&
-                            Matrizes.TryGetValue(letrasMatrizesMult[1], out double[,] matrixBMult))
+                    case "4":
+                        Console.WriteLine("Quais as matrizes a multiplicar? (separe com espaço)");
+                        string[] parts4 = Console.ReadLine().Split(' ');
+                        if (parts4.Length >= 2 && Matrizes.TryGetValue(parts4[0], out double[,] mAm) && Matrizes.TryGetValue(parts4[1], out double[,] mBm))
                         {
-                            double[,] matrixResultMult = CalculadoraMatrizes.Matrix_Mult(matrixAMult, matrixBMult);
-                            if (matrixResultMult != null)
-                            {
-                                CalculadoraMatrizes.MatrixPrint(matrixResultMult);
-                                SaveMatrix(matrixResultMult);
-                            }
+                            double[,] res = CalculadoraMatrizes.Matrix_Mult(mAm, mBm);
+                            if (res != null) { CalculadoraMatrizes.MatrixPrint(res); SaveMatrix(res); }
                         }
-                        else Console.WriteLine("Matrizes não encontradas.");
+                        else Console.WriteLine("Erro ao encontrar matrizes.");
                         break;
 
-                    case "5": //inversa 2x2
-                        Console.WriteLine("Qual a Matriz que pretende usar?");
-                        string matrixToInve2Name = Console.ReadLine();
-                        if (Matrizes.TryGetValue(matrixToInve2Name, out double[,] matrixToInve2))
+                    case "5":
+                        Console.WriteLine("Qual a Matriz 2x2?");
+                        string name5 = Console.ReadLine();
+                        if (Matrizes.TryGetValue(name5, out double[,] m5))
                         {
-                            double[,] matrixInve2 = CalculadoraMatrizes.Matrix_Inverse_2x2(matrixToInve2);
-                            CalculadoraMatrizes.MatrixPrint(matrixInve2);
-                            SaveMatrix(matrixInve2);
+                            double[,] res = CalculadoraMatrizes.Matrix_Inverse_2x2(m5);
+                            CalculadoraMatrizes.MatrixPrint(res); SaveMatrix(res);
                         }
                         break;
 
-                    case "6": //inversa 3x3
-                        Console.WriteLine("Qual a Matriz que pretende usar?");
-                        string matrixToInve3Name = Console.ReadLine();
-                        if (Matrizes.TryGetValue(matrixToInve3Name, out double[,] matrixToInve3))
+                    case "6":
+                        Console.WriteLine("Qual a Matriz 3x3?");
+                        string name6 = Console.ReadLine();
+                        if (Matrizes.TryGetValue(name6, out double[,] m6))
                         {
-                            double[,] matrixInve3 = CalculadoraMatrizes.Matrix_Invers_3x3(matrixToInve3);
-                            CalculadoraMatrizes.MatrixPrint(matrixInve3);
-                            SaveMatrix(matrixInve3);
+                            double[,] res = CalculadoraMatrizes.Matrix_Invers_3x3(m6);
+                            CalculadoraMatrizes.MatrixPrint(res); SaveMatrix(res);
                         }
                         break;
 
-                    case "7": //transposta
-                        Console.WriteLine("Qual a Matriz que pretende usar?");
-                        string matrixToTransposeName = Console.ReadLine();
-                        if (Matrizes.TryGetValue(matrixToTransposeName, out double[,] matrixToTranspose))
+                    case "7":
+                        Console.WriteLine("Qual a Matriz?");
+                        string name7 = Console.ReadLine();
+                        if (Matrizes.TryGetValue(name7, out double[,] m7))
                         {
-                            double[,] matrixTranspose = CalculadoraMatrizes.Matrix_Transpose(matrixToTranspose);
-                            CalculadoraMatrizes.MatrixPrint(matrixTranspose);
-                            SaveMatrix(matrixTranspose);
+                            double[,] res = CalculadoraMatrizes.Matrix_Transpose(m7);
+                            CalculadoraMatrizes.MatrixPrint(res); SaveMatrix(res);
                         }
                         break;
 
-                    case "8": //Matriz diagonal
-                        Console.WriteLine("Qual a Matriz que pretende usar?");
-                        string matrixIsDiagonalName = Console.ReadLine();
-                        if (Matrizes.TryGetValue(matrixIsDiagonalName, out double[,] matrixIsDiagonal))
+                    case "8":
+                        Console.WriteLine("Qual a Matriz?");
+                        string name8 = Console.ReadLine();
+                        if (Matrizes.TryGetValue(name8, out double[,] m8))
+                            Console.WriteLine(CalculadoraMatrizes.Matrix_IsDiagonal(m8));
+                        Console.ReadLine();
+                        break;
+
+                    case "9":
+                        Console.WriteLine("Qual a Matriz?");
+                        string name9 = Console.ReadLine();
+                        if (Matrizes.TryGetValue(name9, out double[,] m9))
+                            Console.WriteLine(CalculadoraMatrizes.Matrix_IsTriangular(m9));
+                        Console.ReadLine();
+                        break;
+
+                    case "10":
+                        Console.WriteLine("Qual a Matriz 3x3?");
+                        string name10 = Console.ReadLine();
+                        if (Matrizes.TryGetValue(name10, out double[,] m10))
                         {
-                            Console.WriteLine(CalculadoraMatrizes.Matrix_IsDiagonal(matrixIsDiagonal));
+                            double det = CalculadoraMatrizes.Matrix_Determinant_3x3(m10);
+                            Console.WriteLine($"Determinante: {det}");
                         }
                         Console.ReadLine();
                         break;
 
-                    case "9": //triangular superior
-                        Console.WriteLine("Qual a Matriz que pretende usar?");
-                        string matrixIsTriangularName = Console.ReadLine();
-                        if (Matrizes.TryGetValue(matrixIsTriangularName, out double[,] matrixIsTriangular))
-                        {
-                            Console.WriteLine(CalculadoraMatrizes.Matrix_IsTriangular(matrixIsTriangular));
-                        }
+                    case "11":
+                        Console.WriteLine("Nome do vetor:");
+                        string nameVec = Console.ReadLine();
+                        // Aqui usa a leitura padrão (sem 'q')
+                        double[] vec = CalculadoraMatrizes.Vector_Read();
+                        CalculadoraMatrizes.VectorPrint(vec);
+                        Vetores.TryAdd(nameVec, vec);
                         Console.ReadLine();
                         break;
 
-                    case "10": //Det 3x3
-                        Console.WriteLine("Qual a Matriz que pretende usar?");
-                        string matrixToDetName = Console.ReadLine();
-                        if (Matrizes.TryGetValue(matrixToDetName, out double[,] matrixToDet))
-                        {
-                            double Det3x3 = CalculadoraMatrizes.Matrix_Determinant_3x3(matrixToDet);
-                            Console.WriteLine($"O determinante da Matriz \"{matrixToDetName}\" é {Det3x3}");
-                        }
-                        Console.ReadLine();
+                    case "12":
+                        // INSTANCIA O JOGO E INICIA
+                        BatalhaNaval jogo = new BatalhaNaval();
+                        jogo.IniciarJogo();
                         break;
 
-                    case "11": // Ler vetor
-                        Console.WriteLine("Qual o nome que pretende dar a este vetor");
-                        string nameVetor = Console.ReadLine();
-                        double[] vector = CalculadoraMatrizes.Vector_Read();
-
-                        // Só guarda se não for null (se user não digitou 'q')
-                        if (vector != null)
-                        {
-                            CalculadoraMatrizes.VectorPrint(vector);
-                            Vetores.TryAdd(nameVetor, vector);
-                        }
-                        else
-                        {
-                            Console.WriteLine("Operação cancelada.");
-                        }
-                        Console.ReadLine();
-                        break;
-
-                    case "LM": // Listar Matrizes
+                    case "LM":
                         CalculadoraMatrizes.Show_Matrixes(Matrizes);
                         Console.ReadLine();
                         break;
 
-                    case "LV": // Listar Vetores
+                    case "LV":
                         CalculadoraMatrizes.Show_Vectors(Vetores);
                         Console.ReadLine();
-                        break;
-
-                    case "12": // JOGAR BATALHA NAVAL
-                        BatalhaNaval jogo = new BatalhaNaval();
-                        jogo.IniciarJogo();
                         break;
 
                     default:
@@ -209,7 +179,7 @@ public class CalculadoraController
             }
             catch (Exception e)
             {
-                Console.WriteLine("Ocorreu um erro: " + e.Message);
+                Console.WriteLine("Erro: " + e.Message);
                 Console.ReadLine();
             }
         }
@@ -217,13 +187,13 @@ public class CalculadoraController
 
     public void SaveMatrix(double[,] matrix)
     {
-        Console.WriteLine("Pretende guardar esta matriz? (S-sim ou N-nao)");
-        string escolha = Console.ReadLine();
-        if (escolha == "S" || escolha == "s")
+        Console.WriteLine("Guardar matriz? (S/N)");
+        string esc = Console.ReadLine();
+        if (esc.ToLower() == "s")
         {
-            Console.WriteLine("Que nome pretende dar a esta matriz?");
-            string matrixName = Console.ReadLine();
-            Matrizes.TryAdd(matrixName, matrix);
+            Console.WriteLine("Nome:");
+            string nome = Console.ReadLine();
+            Matrizes.TryAdd(nome, matrix);
         }
     }
 }

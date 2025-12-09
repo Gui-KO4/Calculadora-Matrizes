@@ -1,85 +1,128 @@
 using System;
-using System.Threading; // Necessário para o Sleep
+using System.Threading; 
 
 public class BatalhaNaval
 {
-    private double[,] TabuleiroOculto; // Onde estão os navios
-    private double[,] TabuleiroVisivel; // O que o jogador vê
-    private int Tamanho = 5; // Tabuleiro 5x5
+    private double[,] TabuleiroOculto;
+    private double[,] TabuleiroVisivel;
+    private int Tamanho = 5;
     private int NaviosRestantes = 3;
 
     public void IniciarJogo()
     {
-        // Inicializar tabuleiros
         TabuleiroOculto = new double[Tamanho, Tamanho];
         TabuleiroVisivel = new double[Tamanho, Tamanho];
 
-        // Colocar navios aleatoriamente
         PosicionarNaviosAleatorios();
 
         bool jogoRodando = true;
 
         while (jogoRodando)
         {
-            Console.Clear(); // Limpa o ecrã a cada novo turno
+            Console.Clear(); 
             Console.WriteLine("=== BATALHA NAVAL MATRICIAL ===");
             Console.WriteLine("Legenda: 0=Mar | 8=ACERTO | -1=ÁGUA");
-            
+            Console.WriteLine($"Navios restantes: {NaviosRestantes}");
+
             Console.WriteLine("\n--- RADAR ATUAL ---");
             CalculadoraMatrizes.MatrixPrint(TabuleiroVisivel);
 
-            Console.WriteLine($"\nNavios restantes: {NaviosRestantes}");
-            Console.WriteLine("Lance as coordenadas do míssil! (Escreva 'q' no tamanho para sair)");
-            
-            // Lê as coordenadas
-            double[] coordenadas = CalculadoraMatrizes.Vector_Read();
+            // --- AQUI O JOGO VAI LER O TIRO ---
+            double[] coordenadas = LerTiroControlado();
 
-            // === VERIFICAÇÃO PARA SAIR ===
+            // Se for null, significa que escreveste 'q' em algum momento
             if (coordenadas == null)
             {
-                Console.WriteLine("A sair da Batalha Naval...");
-                return; 
+                Console.WriteLine("\nA abandonar a missão... Volte sempre!");
+                Thread.Sleep(1500);
+                return; // Sai do método IniciarJogo e volta ao Menu Principal
             }
 
-            // Validação de tamanho do vetor
+            // Validação de tamanho (caso o user tenha posto tamanho errado mas não 'q')
             if (coordenadas.Length < 2)
             {
-                Console.WriteLine("Erro: O vetor precisa ter tamanho 2. A reiniciar turno...");
-                System.Threading.Thread.Sleep(2000);
+                Console.WriteLine("Erro: O vetor tem de ter tamanho 2 (Linha, Coluna).");
+                Thread.Sleep(2000);
                 continue;
             }
 
             int linha = (int)coordenadas[0];
             int coluna = (int)coordenadas[1];
 
-            // Verificar se está dentro do tabuleiro
+            // Validação de limites
             if (linha < 0 || linha >= Tamanho || coluna < 0 || coluna >= Tamanho)
             {
-                Console.WriteLine("Coordenada fora do radar! Tente entre 0 e 4.");
-                System.Threading.Thread.Sleep(2000);
+                Console.WriteLine($"Coordenada inválida! Use valores entre 0 e {Tamanho - 1}.");
+                Thread.Sleep(2000);
                 continue;
             }
 
-            // --- AQUI ESTÁ A LÓGICA DO TIRO E A PAUSA ---
             ProcessarTiro(linha, coluna);
 
-            // Verificar Vitória antes de pausar
+            // Verifica vitória
             if (NaviosRestantes == 0)
             {
-                Console.WriteLine("\nPARABÉNS! TODOS OS ALVOS FORAM NEUTRALIZADOS.");
+                Console.WriteLine("\nPARABÉNS! TODOS OS ALVOS FORAM ABATIDOS!");
                 Console.WriteLine("Pressione Enter para voltar ao menu.");
                 Console.ReadLine();
                 jogoRodando = false;
             }
             else
             {
-                // SE O JOGO CONTINUA:
-                Console.WriteLine("\n-------------------------------------------");
-                Console.WriteLine("A atualizar radar em 5 segundos...");
-                // O PROGRAMA ESPERA AQUI 5 SEGUNDOS
-                System.Threading.Thread.Sleep(5000); 
+                Console.WriteLine("\nA atualizar radar em 5 segundos...");
+                Thread.Sleep(5000); 
             }
         }
+    }
+
+    // === MÉTODO ATUALIZADO PARA SAIR A QUALQUER MOMENTO ===
+    private double[] LerTiroControlado()
+    {
+        Console.WriteLine("\nLance o míssil! (Escreva 'q' a qualquer momento para sair)");
+        
+        // 1. Pergunta o Tamanho
+        Console.WriteLine("Defina o tamanho do vetor (Digite 2):");
+        string inputSize = Console.ReadLine();
+
+        // Verifica saída no tamanho
+        if (IsExitCommand(inputSize)) return null;
+
+        int size;
+        if (!int.TryParse(inputSize, out size))
+        {
+            size = 2; // Se escreveres algo errado que não seja 'q', assume 2
+        }
+
+        double[] vetor = new double[size];
+        
+        // 2. Pergunta as Coordenadas (Linha e Coluna)
+        for (int i = 0; i < size; i++)
+        {
+            string tipo = (i == 0) ? "Linha" : "Coluna";
+            Console.WriteLine($"Digite o valor para {tipo} (Posição {i}): ");
+            
+            string inputValor = Console.ReadLine();
+
+            // Verifica saída nas coordenadas
+            if (IsExitCommand(inputValor)) return null;
+
+            try
+            {
+                vetor[i] = Convert.ToDouble(inputValor);
+            }
+            catch
+            {
+                Console.WriteLine("Valor inválido, assumindo 0.");
+                vetor[i] = 0;
+            }
+        }
+        return vetor;
+    }
+
+    // Função auxiliar pequena para verificar o "q"
+    private bool IsExitCommand(string input)
+    {
+        return !string.IsNullOrEmpty(input) && input.Trim().ToLower() == "q";
     }
 
     private void PosicionarNaviosAleatorios()
@@ -102,24 +145,22 @@ public class BatalhaNaval
 
     private void ProcessarTiro(int l, int c)
     {
-        // Se já atirou ali
         if (TabuleiroVisivel[l, c] != 0)
         {
-            Console.WriteLine($"\n>>> ALERTA: Você já atirou na coordenada ({l},{c})! <<<");
+            Console.WriteLine($"\n>>> ALERTA: Já atiraste em ({l},{c})! <<<");
             return;
         }
 
-        // Verifica se acertou
         if (TabuleiroOculto[l, c] == 1)
         {
-            Console.WriteLine($"\n>>> FOGO NA POSIÇÃO ({l},{c})! ACERTOU UM NAVIO! <<<");
-            TabuleiroVisivel[l, c] = 8; // Marca Acerto
+            Console.WriteLine($"\n>>> KABUM! ACERTO NA POSIÇÃO ({l},{c})! <<<");
+            TabuleiroVisivel[l, c] = 8;
             NaviosRestantes--;
         }
         else
         {
-            Console.WriteLine($"\n>>> SPLASH! Tiro na água na posição ({l},{c}). <<<");
-            TabuleiroVisivel[l, c] = -1; // Marca Erro
+            Console.WriteLine($"\n>>> SPLASH! Tiro na água em ({l},{c}). <<<");
+            TabuleiroVisivel[l, c] = -1;
         }
     }
 }

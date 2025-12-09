@@ -10,14 +10,16 @@ public class CalculadoraMatrizes
             Console.WriteLine("Qual o tamanho da sua matriz? (Ex: 2x2)");
 
             string size = Console.ReadLine();
+            // Verifica se o input não está vazio
+            if (string.IsNullOrWhiteSpace(size)) continue;
+
             string[] parts = size.Split('x', StringSplitOptions.None);
 
             if (parts.Length <= 2)
             {
-                // Proteção simples contra erros de parse
                 if (!int.TryParse(parts[0], out int Columns) || !int.TryParse(parts[1], out int Rows))
                 {
-                    Console.WriteLine("Formato inválido. Tente novamente (Ex: 2x2).");
+                    Console.WriteLine("Formato inválido. Tente '2x2'.");
                     continue;
                 }
 
@@ -29,8 +31,7 @@ public class CalculadoraMatrizes
                         Console.WriteLine($"Qual o numero na posiçao {i}{f}?");
                         try
                         {
-                            double num = Convert.ToDouble(Console.ReadLine());
-                            MatrixRead[i, f] = num;
+                            MatrixRead[i, f] = Convert.ToDouble(Console.ReadLine());
                         }
                         catch
                         {
@@ -73,16 +74,16 @@ public class CalculadoraMatrizes
 
     public static double[,] Matrix_Scalar_Mult(double[,] matriz, double constante)
     {
-        double[,] Matrix_Scalar_Mult = (double[,])matriz.Clone(); // Clone para não alterar a original se não quiseres
+        // Cria clone para não alterar a original diretamente
+        double[,] result = (double[,])matriz.Clone();
         for (int i = 0; i < matriz.GetLength(0); i++)
         {
             for (int j = 0; j < matriz.GetLength(1); j++)
             {
-                Matrix_Scalar_Mult[i, j] *= constante;
+                result[i, j] *= constante;
             }
         }
-
-        return Matrix_Scalar_Mult;
+        return result;
     }
 
     public static double[,] Matrix_ADD(double[,] MatrizA, double[,] MatrizB)
@@ -101,41 +102,33 @@ public class CalculadoraMatrizes
             }
             return MatrixADD;
         }
-        else
-        {
-            Console.WriteLine("Erro: Matrizes de tamanhos diferentes não podem ser somadas.");
-            return null;
-        }
+        return null; // Retorna null se tamanhos diferentes
     }
 
     public static double[,] Matrix_Mult(double[,] MatrizA, double[,] MatrizB)
     {
-        double[,] MatrizMult = null;
-
         if (MatrizA.GetLength(1) != MatrizB.GetLength(0))
         {
             Console.WriteLine("As matrizes não são compatíveis para multiplicação.");
+            return null;
         }
-        else
+
+        int linhas = MatrizA.GetLength(0);
+        int colunas = MatrizB.GetLength(1);
+        int comum = MatrizA.GetLength(1);
+
+        double[,] MatrizMult = new double[linhas, colunas];
+
+        for (int i = 0; i < linhas; i++)
         {
-            int linhas = MatrizA.GetLength(0);
-            int colunas = MatrizB.GetLength(1);
-            int comum = MatrizA.GetLength(1);
-
-            MatrizMult = new double[linhas, colunas];
-
-            for (int i = 0; i < linhas; i++)
+            for (int j = 0; j < colunas; j++)
             {
-                for (int j = 0; j < colunas; j++)
+                for (int k = 0; k < comum; k++)
                 {
-                    for (int k = 0; k < comum; k++)
-                    {
-                        MatrizMult[i, j] += MatrizA[i, k] * MatrizB[k, j];
-                    }
+                    MatrizMult[i, j] += MatrizA[i, k] * MatrizB[k, j];
                 }
             }
         }
-
         return MatrizMult;
     }
 
@@ -143,80 +136,58 @@ public class CalculadoraMatrizes
     {
         EnsureMatrixSize(matrizA, 2, 2, nameof(matrizA));
 
-        double diagonalPrincipal = matrizA[0, 0] * matrizA[1, 1];
-        double diagonalSecundaria = matrizA[0, 1] * matrizA[1, 0];
-        double detA = diagonalPrincipal - diagonalSecundaria;
+        double detA = (matrizA[0, 0] * matrizA[1, 1]) - (matrizA[0, 1] * matrizA[1, 0]);
 
-        if (detA == 0)
-        {
-            throw new InvalidOperationException("A matriz não é invertível (determinante é zero).");
-        }
+        if (detA == 0) throw new InvalidOperationException("Determinante é zero.");
 
         double[,] matrizTemp = new double[2, 2];
         matrizTemp[0, 0] = matrizA[1, 1];
         matrizTemp[1, 1] = matrizA[0, 0];
         matrizTemp[0, 1] = -matrizA[0, 1];
         matrizTemp[1, 0] = -matrizA[1, 0];
-        
-        // Multiplicar por 1/detA
-        double[,] matrixInverse2x2 = Matrix_Scalar_Mult(matrizTemp, 1.0 / detA);
-        return matrixInverse2x2;
+
+        return Matrix_Scalar_Mult(matrizTemp, 1.0 / detA);
     }
 
     public static double Matrix_Determinant_3x3(double[,] matrizA)
     {
-        double det = matrizA[0, 0] * (matrizA[1, 1] * matrizA[2, 2] - matrizA[1, 2] * matrizA[2, 1])
-           - matrizA[0, 1] * (matrizA[1, 0] * matrizA[2, 2] - matrizA[1, 2] * matrizA[2, 0])
-           + matrizA[0, 2] * (matrizA[1, 0] * matrizA[2, 1] - matrizA[1, 1] * matrizA[2, 0]);
-
-        return det;
+        return matrizA[0, 0] * (matrizA[1, 1] * matrizA[2, 2] - matrizA[1, 2] * matrizA[2, 1])
+             - matrizA[0, 1] * (matrizA[1, 0] * matrizA[2, 2] - matrizA[1, 2] * matrizA[2, 0])
+             + matrizA[0, 2] * (matrizA[1, 0] * matrizA[2, 1] - matrizA[1, 1] * matrizA[2, 0]);
     }
 
     public static double[,] Matrix_Invers_3x3(double[,] matrizA)
     {
         EnsureMatrixSize(matrizA, 3, 3, nameof(matrizA));
-
-        // Calcula determinante
         double det = Matrix_Determinant_3x3(matrizA);
 
-        if (det == 0)
-        {
-            throw new InvalidOperationException("O determinante é zero, a matriz não é invertível.");
-        }
+        if (det == 0) throw new InvalidOperationException("Determinante é zero.");
 
-        // Calcula matriz de cofatores
         double[,] cofatores = new double[3, 3];
+        // Linha 0
         cofatores[0, 0] = (matrizA[1, 1] * matrizA[2, 2] - matrizA[1, 2] * matrizA[2, 1]);
         cofatores[0, 1] = -(matrizA[1, 0] * matrizA[2, 2] - matrizA[1, 2] * matrizA[2, 0]);
         cofatores[0, 2] = (matrizA[1, 0] * matrizA[2, 1] - matrizA[1, 1] * matrizA[2, 0]);
-
+        // Linha 1
         cofatores[1, 0] = -(matrizA[0, 1] * matrizA[2, 2] - matrizA[0, 2] * matrizA[2, 1]);
         cofatores[1, 1] = (matrizA[0, 0] * matrizA[2, 2] - matrizA[0, 2] * matrizA[2, 0]);
         cofatores[1, 2] = -(matrizA[0, 0] * matrizA[2, 1] - matrizA[0, 1] * matrizA[2, 0]);
-
+        // Linha 2
         cofatores[2, 0] = (matrizA[0, 1] * matrizA[1, 2] - matrizA[0, 2] * matrizA[1, 1]);
         cofatores[2, 1] = -(matrizA[0, 0] * matrizA[1, 2] - matrizA[0, 2] * matrizA[1, 0]);
         cofatores[2, 2] = (matrizA[0, 0] * matrizA[1, 1] - matrizA[0, 1] * matrizA[1, 0]);
 
-        // Transposta da matriz de cofatores - adjunta
+        // Adjunta (Transposta dos cofatores)
         double[,] adjunta = new double[3, 3];
         for (int i = 0; i < 3; i++)
-        {
             for (int j = 0; j < 3; j++)
-            {
                 adjunta[i, j] = cofatores[j, i];
-            }
-        }
 
-        // Divide cada elemento pelo determinante
+        // Inversa = Adjunta / Det
         double[,] inversa = new double[3, 3];
         for (int i = 0; i < 3; i++)
-        {
             for (int j = 0; j < 3; j++)
-            {
                 inversa[i, j] = adjunta[i, j] / det;
-            }
-        }
 
         return inversa;
     }
@@ -241,8 +212,7 @@ public class CalculadoraMatrizes
         int rows = matrizA.GetLength(0);
         int cols = matrizA.GetLength(1);
 
-        if (rows != cols)
-            return "A matriz não é quadrada, logo não pode ser diagonal.";
+        if (rows != cols) return "A matriz não é quadrada.";
 
         for (int i = 0; i < rows; i++)
         {
@@ -260,42 +230,31 @@ public class CalculadoraMatrizes
         int rows = matrizA.GetLength(0);
         int cols = matrizA.GetLength(1);
 
-        if (rows != cols)
-            return "A matriz não é quadrada, logo não pode ser triangular.";
+        if (rows != cols) return "A matriz não é quadrada.";
+
         bool superior = true;
         for (int i = 1; i < rows; i++)
         {
             for (int j = 0; j < i; j++)
             {
-                if (matrizA[i, j] != 0)
-                    superior = false;
+                if (matrizA[i, j] != 0) superior = false;
             }
         }
-        if (superior)
-            return "A matriz é triangular superior.";
+        if (superior) return "A matriz é triangular superior.";
         return "A matriz não é triangular.";
     }
 
-    // --- AQUI ESTÁ A ALTERAÇÃO PARA O 'q' ---
+    // --- LEITURA PADRÃO DE VETOR (SEM LÓGICA DE 'Q') ---
     public static double[] Vector_Read()
     {
-        Console.WriteLine("Qual o tamanho do seu vetor? (Ou digite 'q' para voltar)");
+        Console.WriteLine("Qual o tamanho do seu vetor?");
         string input = Console.ReadLine();
-
-        // Verifica se quer sair
-        if (input.ToLower() == "q")
-        {
-            return null;
-        }
-
         if (!int.TryParse(input, out int size))
         {
-            Console.WriteLine("Valor inválido. A assumir tamanho 2.");
-            size = 2;
+            size = 2; // Default seguro
         }
 
         double[] vector = new double[size];
-
         for (int i = 0; i < size; i++)
         {
             Console.WriteLine($"Qual o numero na posição {i}?");
@@ -308,13 +267,11 @@ public class CalculadoraMatrizes
                 vector[i] = 0;
             }
         }
-
         return vector;
     }
 
     public static void VectorPrint(double[] vector)
     {
-        if (vector == null) return;
         Console.Write("(");
         foreach (var v in vector)
         {
@@ -336,10 +293,8 @@ public class CalculadoraMatrizes
 
     private static void EnsureMatrixSize(double[,] matrix, int expectedRows, int expectedCols, string argumentName)
     {
-        if (matrix == null)
-            throw new ArgumentNullException(argumentName);
-
+        if (matrix == null) throw new ArgumentNullException(argumentName);
         if (matrix.GetLength(0) != expectedRows || matrix.GetLength(1) != expectedCols)
-            throw new ArgumentException($"A matriz deve ter dimensão {expectedRows}x{expectedCols}.", argumentName);
+            throw new ArgumentException($"Dimensão incorreta. Esperado {expectedRows}x{expectedCols}.", argumentName);
     }
 }
