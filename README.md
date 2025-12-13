@@ -1,19 +1,18 @@
-#Calculadora de Matrizes
----
-Este projeto é uma calculadora de matrizes e vetores em C# que resolve um numero de operaçoes
-e um jogo de batalha naval 
-##Group members of the project:
----
-*Leandro Santos
-*Guilherme Soares
-*Henrique Carvalho
-*Henrique Metelo
-##Requirements:
----
-*.NET 8.0 SDK or higher
+# Calculadora de Matrizes
 
-##Funções Desenvolvidas
----
+Este projeto é uma calculadora de matrizes e vetores em C# que resolve um numero de operaçoes
+e um jogo de batalha naval
+
+## Group members of the project:
+* Leandro Santos
+* Guilherme Soares
+* Henrique Carvalho
+* Henrique Metelo
+
+## Requirements:
+* .NET 8.0 SDK or higher
+
+## Funções Desenvolvidas
 * Leitura de Matrizes
 * Multiplicação por uma escalar
 * Soma de Matrizes
