@@ -28,7 +28,7 @@ public class CalculadoraMatrizes
                 {
                     for (int f = 0; f < Rows; f++)
                     {
-                        Console.WriteLine($"Qual o numero na posiçao {i}{f}?");
+                        Console.WriteLine($"Qual o numero na posiçao {i + 1}{f + 1}?");
                         try
                         {
                             MatrixRead[i, f] = Convert.ToDouble(Console.ReadLine());
@@ -257,7 +257,7 @@ public class CalculadoraMatrizes
         double[] vector = new double[size];
         for (int i = 0; i < size; i++)
         {
-            Console.WriteLine($"Qual o numero na posição {i}?");
+            Console.WriteLine($"Qual o numero na posição {i+1}?");
             try
             {
                 vector[i] = Convert.ToDouble(Console.ReadLine());

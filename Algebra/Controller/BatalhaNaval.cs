@@ -99,7 +99,7 @@ public class BatalhaNaval
         for (int i = 0; i < size; i++)
         {
             string tipo = (i == 0) ? "Linha" : "Coluna";
-            Console.WriteLine($"Digite o valor para {tipo} (Posição {i}): ");
+            Console.WriteLine($"Digite o valor para {tipo} (Posição {i+1}): ");
             
             string inputValor = Console.ReadLine();
 
